@@ -16,22 +16,17 @@
         </div>
         <div class="commands">
             <!-- Ebbe legyenek tárolva az elküldött üzenetek -->
-            <div class="history">
-                <span>asd</span>
-                <span>naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagyon hoszúúúúúúúúúúúúúúú szöveg</span>
-                <span>asd</span>
-                <span>asd</span>
-                <span>asd</span>
-                <span>asd</span>
+            <div class="history" id="history">
             </div>
             <!-- Root placeholder -->
-            <span>terminal@rm-rf ~ $</span>
+            <span id="currentPath">terminal@rm-rf ~ $</span>
             <div id="user-input">
-                <span>asdasd</span>
+                <span id="userinput"></span>
             </div>
             <!-- Pislogó szar -->
-            <span id="cursor" class="blink">a</span>
+            <span id="cursor" class="blink"></span>
         </div>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
