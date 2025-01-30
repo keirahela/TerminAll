@@ -23,12 +23,12 @@ h1 {
 span {
     color: white;
     font-size: x-large;
+    overflow-wrap: break-word;
 }
 
 .history {
     display: flex;
     flex-direction: column;
-    overflow-wrap: break-word;
 }
 
 .blink {
