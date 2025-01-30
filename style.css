@@ -1,0 +1,41 @@
+body {
+    background-color: rgb(48, 56, 66);
+    font-family: 'Courier New', Courier, monospace;
+    overflow-x: hidden;
+}
+
+h1, h2 {
+    font-size: x-large;
+}
+h2 {
+    margin: 0;
+    color:gray
+}
+
+h1 {
+    color: white;
+}
+
+.commands {
+    margin-top: 10px;
+}
+
+span {
+    color: white;
+    font-size: x-large;
+}
+
+.history {
+    display: flex;
+    flex-direction: column;
+    overflow-wrap: break-word;
+}
+
+.blink {
+    background-color: white;
+    
+}
+
+#user-input {
+    display: inline;
+}
