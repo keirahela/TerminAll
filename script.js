@@ -233,6 +233,12 @@ function handleCommand(command) {
       return fcolor(args[1]);
     case "currentcar":
       return currentcar();
+    case "echo":
+      return echo(args);
+    case "date":
+      return date();
+    case "logname":
+      return "terminal";
     case "":
       return "";
     default:
@@ -248,6 +254,19 @@ function bcolor(color) {
   else {
     return "Syntax error: bcolor <color>";
   }
+}
+
+function date() {
+  return new Date;
+}
+
+function echo(text) {
+  let string = "";
+  for (let i = 1; text.length > i; i++ ) {
+    if (string == "") string = string + text[i];
+    else string = string + " " + text[i];
+    }
+  return string;
 }
 
 function fcolor(color) {
