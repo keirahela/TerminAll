@@ -303,7 +303,7 @@ function rm(command) {
 }
 
 function cat(filename) {
-  let newCurrentDir = getCurrentDirectoryObject(currentDirectory);
+  const newCurrentDir = getCurrentDirectoryObject(currentDirectory);
   if (newCurrentDir && newCurrentDir[filename]) {
     const fileContent = newCurrentDir[filename];
     if (typeof fileContent === "string") {
@@ -313,6 +313,23 @@ function cat(filename) {
     }
   } else {
     return `cat: ${filename}: No such file`;
+  }
+}
+
+function touch(filename) {
+  if (!filename) {
+    return "Usage: touch <filename>";
+  }
+  const currentDirObj = getCurrentDirectoryObject(currentDirectory);
+  if (currentDirObj) {
+    if (!currentDirObj.hasOwnProperty(filename)) {
+      currentDirObj[filename] = "";
+      return `touch: Created file '${filename}'`;
+    } else {
+      return `touch: File '${filename}' already exists`;
+    }
+  } else {
+    return `touch: No such directory`;
   }
 }
 
@@ -349,6 +366,8 @@ function handleCommand(command) {
       return rm(command);
     case "cat":
       return cat(args[1]);
+    case "touch":
+      return touch(args[1])
     case "":
       return "";
     default:
