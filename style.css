@@ -1,7 +1,9 @@
-body {
+#body {
     background-color: rgb(48, 56, 66);
     font-family: 'Courier New', Courier, monospace;
     overflow-x: hidden;
+    padding: 0;
+    margin: 0;
 }
 
 h1, h2 {
@@ -14,26 +16,27 @@ h2 {
 
 h1 {
     color: white;
+    margin-top: 0;
 }
 
-.commands {
+#commands {
     margin-top: 10px;
+    color: white;
 }
 
 span {
-    color: white;
     font-size: x-large;
     overflow-wrap: break-word;
 }
 
-.history {
+#history {
     display: flex;
     flex-direction: column;
 }
 
 .blink {
     background-color: white;
-    
+    color: white;
 }
 
 #user-input {

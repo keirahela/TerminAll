@@ -30,6 +30,8 @@ let commands = [
   "resetterm",
   "rm",
   "touch",
+  "bcolor",
+  "fcolor",
 ];
 const specialKeys = [
   "Control",
@@ -225,11 +227,41 @@ function handleCommand(command) {
       return cal();
     case "clear":
       return clear();
+    case "bcolor":
+      return bcolor(args[1]);
+    case "fcolor":
+      return fcolor(args[1]);
+    case "currentcar":
+      return currentcar();
     case "":
       return "";
     default:
       return "Unsupported command: " + command;
   }
+}
+
+function bcolor(color) {
+  if (CSS.supports('color', color)) {
+    document.getElementById("body").style.backgroundColor = color;
+    return "Background color successfully changed!";
+  }
+  else {
+    return "Syntax error: bcolor <color>";
+  }
+}
+
+function fcolor(color) {
+  if (CSS.supports('color', color)) {
+    document.getElementById("commands").style.color = color;
+    return "Font color successfully changed!";
+  }
+  else {
+    return "Syntax error: fcolor <color>";
+  }
+}
+
+function currentcar() {
+  return "Ha autót szeretnél bérleni vagy kiadni, akkor látogass el a currentcar.hu -ra!";
 }
 
 function submitCommand(command) {
