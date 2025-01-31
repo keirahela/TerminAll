@@ -4,6 +4,8 @@ let history = document.getElementById("history");
 let currentPath = document.getElementById("currentPath");
 let currentDirectory = "/";
 let BASE_PREFIX = "terminal@rm-rf";
+let commandHistory = [];
+let historyIndex = -1;
 let fileSystem = {
   home: {
     user1: {
@@ -411,14 +413,16 @@ function currentcar() {
 }
 
 function submitCommand(command) {
+  if (command.trim() === "") return;
+  commandHistory.push(command);
+  historyIndex = commandHistory.length;
+
   window.scrollTo(0, document.body.scrollHeight);
   clearInput();
   let history2 = document.createElement("span");
   history2.innerText = currentPath.innerText + " " + command;
   let span = document.createElement("span");
   span.innerText = handleCommand(command);
-
-  if (command == "") return;
   history.appendChild(history2);
   history.appendChild(span);
 }
@@ -433,6 +437,21 @@ document.addEventListener("keydown", function (event) {
     return;
   } else if (event.key == " ") {
     userInput.innerText += " ";
+    return;
+  } else if (event.key === "ArrowUp") {
+    if (historyIndex > 0) {
+      historyIndex--;
+      userInput.innerText = commandHistory[historyIndex];
+    }
+    return;
+  } else if (event.key === "ArrowDown") {
+    if (historyIndex < commandHistory.length - 1) {
+      historyIndex++;
+      userInput.innerText = commandHistory[historyIndex];
+    } else {
+      historyIndex = commandHistory.length;
+      userInput.innerText = "";
+    }
     return;
   }
 
