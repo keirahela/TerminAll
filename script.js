@@ -7,22 +7,23 @@ let BASE_PREFIX = "terminal@rm-rf";
 let fileSystem = {
   home: {
     user1: {
-      documents: ["doc1.txt", "doc2.txt"],
-      downloads: [],
-      pictures: [],
+      documents: { "doc1.txt": "Title: Egy macska élete! inf: ???", "doc2.txt": "Mewo, mewo meow meow?" },
+      downloads: {},
+      pictures: { "test.txt":"Jap megy csaó!", },
     },
     user2: {
-      projects: [],
-      music: [],
+      projects: {},
+      music: {},
     },
-    public: [],
+    public: {},
   },
   etc: {
-    config1: [],
-    config2: [],
+    config1: {},
+    config2: {},
   },
-  user: ["file1.txt", "file2.txt"],
-  "README.txt": [],
+  user: { "file1.txt": "File 1 contents", "file2.txt": "File 2 contents" },
+  "README.txt": "Welcome to the Awesome Terminal App!\n This is a simple command-line application (CLI),\n designed to enhance your terminal experience with various utilities and features.",
+  "DONOTREADME.txt": "Yap, you shouldn't this lil bro, now you are getting a virus!"
 };
 let commands = [
   "cal",
@@ -45,6 +46,7 @@ let commands = [
   "bcolor",
   "fcolor",
 ];
+
 const specialKeys = [
   "Control",
   "Alt",
@@ -184,7 +186,6 @@ function getCurrentDirectoryObject(currentDir) {
       return null;
     }
   }
-
   return current;
 }
 
@@ -301,6 +302,20 @@ function rm(command) {
   );
 }
 
+function cat(filename) {
+  let newCurrentDir = getCurrentDirectoryObject(currentDirectory);
+  if (newCurrentDir && newCurrentDir[filename]) {
+    const fileContent = newCurrentDir[filename];
+    if (typeof fileContent === "string") {
+      return fileContent.split("\n").join("\n");
+    } else {
+      return `cat: ${filename}: Is a directory`;
+    }
+  } else {
+    return `cat: ${filename}: No such file`;
+  }
+}
+
 function handleCommand(command) {
   let args = command.split(" ");
   let cmd = args[0];
@@ -332,6 +347,8 @@ function handleCommand(command) {
       return BASE_PREFIX.split("@")[0];
     case "rm":
       return rm(command);
+    case "cat":
+      return cat(args[1]);
     case "":
       return "";
     default:
