@@ -5,6 +5,7 @@ import cd, { BASE_PREFIX } from "./commands/cd.js";
 import clear from "./commands/clear.js";
 import echo from "./commands/echo.js";
 import fcolor from "./commands/fcolor.js";
+import find from "./commands/find.js";
 import ls from "./commands/ls.js";
 import pwd from "./commands/pwd.js";
 import rm from "./commands/rm.js";
@@ -78,6 +79,8 @@ function handleCommand(command) {
       return cat(args[1]);
     case "touch":
       return touch(args[1]);
+    case "find":
+      return find(args[1]);
     case "":
       return "";
     default:
