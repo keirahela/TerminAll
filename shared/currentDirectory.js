@@ -14,6 +14,10 @@ export function getCurrentDirectoryObject(currentDir) {
 
 export let currentDirectory = "/";
 
+export function changeDirectory(currentDir) {
+  currentDirectory = currentDir;
+}
+
 export let fileSystem = {
   home: {
     user1: {

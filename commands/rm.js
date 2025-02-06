@@ -67,7 +67,9 @@ function removeFile(file, recursive, interactive, force, verbose) {
 
 export default function rm(command) {
   let args = command.split(" ");
+  console.log(args);
   args.shift();
+  if (!args[0]) return "No parameters";
 
   let options = "";
 

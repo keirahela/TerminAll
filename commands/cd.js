@@ -1,7 +1,10 @@
-import { getCurrentDirectoryObject } from "../shared/currentDirectory.js";
+import {
+  getCurrentDirectoryObject,
+  changeDirectory,
+  currentDirectory,
+} from "../shared/currentDirectory.js";
 
 export let BASE_PREFIX = "terminal@rm-rf";
-let currentDirectory = "/";
 
 let currentPath = document.getElementById("currentPath");
 
@@ -13,7 +16,7 @@ export default function cd(directory) {
       0,
       currentDirectory.lastIndexOf("/")
     );
-    currentDirectory = parentDir === "" ? "/" : parentDir;
+    changeDirectory(parentDir === "" ? "/" : parentDir);
     updateCurrentPath();
     return `Changed directory to: ${currentDirectory}`;
   } else if (directory.startsWith("/")) {
@@ -28,13 +31,13 @@ export default function cd(directory) {
       }
     }
 
-    currentDirectory = directory;
+    changeDirectory(directory);
     updateCurrentPath();
     return `Changed directory to: ${currentDirectory}`;
   } else {
     const newCurrentDir = currentDirObj[directory];
     if (newCurrentDir) {
-      currentDirectory = resolvePath(currentDirectory, directory);
+      changeDirectory(resolvePath(currentDirectory, directory));
       updateCurrentPath();
       return `Changed directory to: ${currentDirectory}`;
     } else {
