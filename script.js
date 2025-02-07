@@ -10,8 +10,12 @@ import ls from "./commands/ls.js";
 import pwd from "./commands/pwd.js";
 import rm from "./commands/rm.js";
 import touch from "./commands/touch.js";
+import cp from "./commands/cp.js";
+import resetterm from "./commands/resetterm.js"
 import { specialKeys } from "./utils/blockedKeybinds.js";
 import { sleep } from "./utils/helpers.js";
+import mkdir from "./commands/mkdir.js";
+import mv from "./commands/mv.js";
 let cursor = document.getElementById("cursor");
 let userInput = document.getElementById("userinput");
 let history = document.getElementById("history");
@@ -40,6 +44,8 @@ let commands = [
   "fcolor",
 ];
 
+
+
 function clearInput() {
   userInput.innerText = "";
 }
@@ -59,6 +65,12 @@ function handleCommand(command) {
       return pwd();
     case "cal":
       return cal();
+    case "cp":
+      return cp(command);
+    case "mkdir":
+      return mkdir(command)
+    case "mv":
+      return mv(command)
     case "clear":
       return clear();
     case "bcolor":
@@ -81,6 +93,8 @@ function handleCommand(command) {
       return touch(args[1]);
     case "find":
       return find(args[1]);
+    case "resetterm":
+      resetterm()
     case "":
       return "";
     default:
