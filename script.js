@@ -16,6 +16,7 @@ import { specialKeys } from "./utils/blockedKeybinds.js";
 import { sleep } from "./utils/helpers.js";
 import mkdir from "./commands/mkdir.js";
 import mv from "./commands/mv.js";
+import { currentDirectory } from "./shared/currentDirectory.js";
 let cursor = document.getElementById("cursor");
 let userInput = document.getElementById("userinput");
 let history = document.getElementById("history");
@@ -55,16 +56,10 @@ function handleCommand(command) {
   let cmd = args[0];
 
   switch (cmd) {
-    case "help":
-      return "Supported commands: " + commands.join(", ");
-    case "ls":
-      return ls();
-    case "cd":
-      return cd(args[1]);
-    case "pwd":
-      return pwd();
     case "cal":
       return cal();
+    case "cd":
+      return cd(args[1])
     case "cp":
       return cp(command);
     case "mkdir":
@@ -73,6 +68,29 @@ function handleCommand(command) {
       return mv(command)
     case "clear":
       return clear();
+    case "cp":
+      return cp(command);
+    case "date":
+      return date();
+    case "echo":
+      return echo(args);
+    case "find":
+      return find(args[1]);
+    case "help":
+      return "Supported commands: " + commands.join(", ");
+    case "logname":
+      return BASE_PREFIX.split("@")[0];
+    case "ls":
+      return ls();
+    //case "mkdir":
+    //case "mv":
+    case "pwd":
+      return pwd();
+    //case "resetterm":
+    case "rm":
+      return rm(command);
+    case "touch":
+      return touch(args[1]);
     case "bcolor":
       return bcolor(args[1]);
     case "fcolor":

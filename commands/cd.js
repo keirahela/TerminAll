@@ -2,6 +2,7 @@ import {
   getCurrentDirectoryObject,
   changeDirectory,
   currentDirectory,
+  fileSystem
 } from "../shared/currentDirectory.js";
 
 export let BASE_PREFIX = "terminal@rm-rf";

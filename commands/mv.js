@@ -1,15 +1,17 @@
-
-import { getCurrentDirectoryObject, fileSystem } from "../shared/currentDirectory.js";
+import { getCurrentDirectoryObject, fileSystem, currentDirectory } from "../shared/currentDirectory.js";
 
 function mvCommand(source, destination) {
-    const sourceObj = getCurrentDirectoryObject(source);
-    const destinationDir = getCurrentDirectoryObject(destination);
+    const fullSourcePath = `${currentDirectory}/${source}`;
+    const fullDestinationPath = `${currentDirectory}/${destination}`;
+
+    const sourceObj = getCurrentDirectoryObject(fullSourcePath);
+    const destinationDir = getCurrentDirectoryObject(fullDestinationPath);
 
     if (!sourceObj) {
         return `mv: ${source}: No such file or directory`;
     }
 
-    if (!destinationDir) {
+    if (!destinationDir || typeof destinationDir !== 'object') {
         return `mv: ${destination}: No such directory`;
     }
 
@@ -17,16 +19,17 @@ function mvCommand(source, destination) {
 
     destinationDir[name] = sourceObj;
 
-    const parts = source.split("/");
+    const sourceParts = fullSourcePath.split("/").filter(Boolean);
     let current = fileSystem;
-    for (let i = 0; i < parts.length - 1; i++) {
-        current = current[parts[i]];
+
+    for (let i = 0; i < sourceParts.length - 1; i++) {
+        current = current[sourceParts[i]];
     }
-    delete current[parts[parts.length - 1]];
+    const sourceItemName = sourceParts[sourceParts.length - 1];
+    delete current[sourceItemName];
 
-    return `Moved ${name} from ${source} to ${destination}`;
+    return `Moved ${name} from ${fullSourcePath} to ${fullDestinationPath}`;
 }
-
 
 export default function mv(command) {
     const args = command.split(" ");
