@@ -59,17 +59,15 @@ function handleCommand(command) {
     case "cal":
       return cal();
     case "cd":
-      return cd(args[1])
+      return cd(args[1]);
     case "cp":
       return cp(command);
     case "mkdir":
-      return mkdir(command)
+      return mkdir(command);
     case "mv":
-      return mv(command)
+      return mv(command);
     case "clear":
       return clear();
-    case "cp":
-      return cp(command);
     case "date":
       return date();
     case "echo":
@@ -82,11 +80,8 @@ function handleCommand(command) {
       return BASE_PREFIX.split("@")[0];
     case "ls":
       return ls();
-    //case "mkdir":
-    //case "mv":
     case "pwd":
       return pwd();
-    //case "resetterm":
     case "rm":
       return rm(command);
     case "touch":
@@ -97,26 +92,11 @@ function handleCommand(command) {
       return fcolor(args[1]);
     case "currentcar":
       return currentcar();
-    case "echo":
-      return echo(args);
-    case "date":
-      return date();
-    case "logname":
-      return BASE_PREFIX.split("@")[0];
-    case "rm":
-      return rm(command);
-    case "cat":
-      return cat(args[1]);
-    case "touch":
-      return touch(args[1]);
-    case "find":
-      return find(args[1]);
-    case "resetterm":
-      resetterm()
     case "":
       return "";
     default:
       return "Unsupported command: " + command;
+  
   }
 }
 
