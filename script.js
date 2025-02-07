@@ -12,6 +12,7 @@ import rm from "./commands/rm.js";
 import touch from "./commands/touch.js";
 import { specialKeys } from "./utils/blockedKeybinds.js";
 import { sleep } from "./utils/helpers.js";
+import cp from "./commands/cp.js";
 let cursor = document.getElementById("cursor");
 let userInput = document.getElementById("userinput");
 let history = document.getElementById("history");
@@ -81,6 +82,8 @@ function handleCommand(command) {
       return touch(args[1]);
     case "find":
       return find(args[1]);
+    case "cp":
+      return cp(command);
     case "":
       return "";
     default:
