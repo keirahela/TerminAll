@@ -2,7 +2,7 @@ import {
   getCurrentDirectoryObject,
   changeDirectory,
   currentDirectory,
-  fileSystem
+  fileSystem,
 } from "../shared/currentDirectory.js";
 
 export let BASE_PREFIX = "terminal@rm-rf";
@@ -11,6 +11,13 @@ let currentPath = document.getElementById("currentPath");
 
 export default function cd(directory) {
   const currentDirObj = getCurrentDirectoryObject(currentDirectory);
+
+  console.log(directory);
+  if (directory == "" || directory == undefined) {
+    changeDirectory("/");
+    updateCurrentPath();
+    return "Changed directory to: /";
+  }
 
   if (directory === "..") {
     const parentDir = currentDirectory.substring(

@@ -133,7 +133,6 @@ function submitCommand(command) {
   commandHistory.push(command);
   historyIndex = commandHistory.length;
 
-  window.scrollTo(0, document.body.scrollHeight);
   clearInput();
 
   let history2 = document.createElement("span");
@@ -143,12 +142,16 @@ function submitCommand(command) {
   let result = handleCommand(command);
   span.innerText = result;
   let toFile = command.split("> ")[1];
-  if (toFile && toFile.split(".").pop() == "txt") {
-    span.innerText = writeToFile(toFile, result.split(" > ")[0]);
+  if (toFile) {
+    span.innerText = writeToFile(
+      toFile,
+      result.split(" > ")[0].replace(/["']/g, "")
+    );
   }
 
   history.appendChild(history2);
   history.appendChild(span);
+  window.scrollTo(0, document.body.scrollHeight);
 }
 
 document.addEventListener("keydown", function (event) {
