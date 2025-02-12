@@ -11,12 +11,15 @@ import pwd from "./commands/pwd.js";
 import rm from "./commands/rm.js";
 import touch from "./commands/touch.js";
 import cp from "./commands/cp.js";
-import resetterm from "./commands/resetterm.js"
+import resetterm from "./commands/resetterm.js";
 import { specialKeys } from "./utils/blockedKeybinds.js";
 import { sleep } from "./utils/helpers.js";
 import mkdir from "./commands/mkdir.js";
 import mv from "./commands/mv.js";
-import { currentDirectory } from "./shared/currentDirectory.js";
+import {
+  currentDirectory,
+  getCurrentDirectoryObject,
+} from "./shared/currentDirectory.js";
 let cursor = document.getElementById("cursor");
 let userInput = document.getElementById("userinput");
 let history = document.getElementById("history");
@@ -45,8 +48,6 @@ let commands = [
   "fcolor",
 ];
 
-
-
 function clearInput() {
   userInput.innerText = "";
 }
@@ -56,6 +57,8 @@ function handleCommand(command) {
   let cmd = args[0];
 
   switch (cmd) {
+    case "cat":
+      return cat(args[1]);
     case "cal":
       return cal();
     case "cd":
@@ -68,6 +71,8 @@ function handleCommand(command) {
       return mv(command);
     case "clear":
       return clear();
+    case "resetterm":
+      return resetterm();
     case "date":
       return date();
     case "echo":
@@ -96,7 +101,6 @@ function handleCommand(command) {
       return "";
     default:
       return "Unsupported command: " + command;
-  
   }
 }
 
@@ -106,6 +110,22 @@ function date() {
 
 function currentcar() {
   return "Ha autót szeretnél bérleni vagy kiadni, akkor látogass el a currentcar.hu -ra!";
+}
+
+function writeToFile(name, content) {
+  const directory = getCurrentDirectoryObject(currentDirectory);
+
+  if (!directory) {
+    return `Error: The current directory does not exist. Cannot write to ${name}`;
+  }
+
+  const fileName = name.split("/").pop();
+
+  directory[fileName] = content;
+
+  console.log(directory);
+
+  return `Wrote to file ${fileName}`;
 }
 
 function submitCommand(command) {
@@ -120,7 +140,12 @@ function submitCommand(command) {
   let span = document.createElement("span");
 
   history2.innerText = currentPath.innerText + " " + command;
-  span.innerText = handleCommand(command);
+  let result = handleCommand(command);
+  span.innerText = result;
+  let toFile = command.split("> ")[1];
+  if (toFile && toFile.split(".").pop() == "txt") {
+    span.innerText = writeToFile(toFile, result.split(" > ")[0]);
+  }
 
   history.appendChild(history2);
   history.appendChild(span);
