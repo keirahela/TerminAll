@@ -198,8 +198,7 @@ document.addEventListener("keydown", function (event) {
     return;
   }else if (event.key === "Delete" && cursorPosition < userInput.textContent.length) {
     userInput.textContent = userInput.textContent.slice(0, cursorPosition) + userInput.textContent.slice(cursorPosition + 1);
-    
-    updateCursor();
+    UCH();
     return;
   } else if (event.key === " ") {
     event.preventDefault();
