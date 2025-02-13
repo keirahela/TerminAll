@@ -5,7 +5,7 @@ import cd, { BASE_PREFIX } from "./commands/cd.js";
 import clear from "./commands/clear.js";
 import echo from "./commands/echo.js";
 import fcolor from "./commands/fcolor.js";
-import find from "./commands/find.js";
+import locate from "./commands/locate.js";
 import ls from "./commands/ls.js";
 import pwd from "./commands/pwd.js";
 import rm from "./commands/rm.js";
@@ -34,7 +34,7 @@ let commands = [
   "cp",
   "date",
   "echo",
-  "find",
+  "locate",
   "help",
   "logname",
   "ls",
@@ -77,14 +77,14 @@ function handleCommand(command) {
       return date();
     case "echo":
       return echo(args);
-    case "find":
-      return find(args[1]);
+    case "locate":
+      return locate(args[1]);
     case "help":
       return "Supported commands: " + commands.join(", ");
     case "logname":
       return BASE_PREFIX.split("@")[0];
     case "ls":
-      return ls();
+      return ls(args[1]);
     case "pwd":
       return pwd();
     case "rm":

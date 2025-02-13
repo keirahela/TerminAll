@@ -4,12 +4,21 @@ import {
 } from "../shared/currentDirectory.js";
 
 function copyFile(src, dest) {
-  const srcFile = getCurrentDirectoryObject(src);
-  const destDir = getCurrentDirectoryObject(dest);
+  let srcFile = getCurrentDirectoryObject(currentDirectory);
+  let destDir = getCurrentDirectoryObject(dest);
 
-  if (srcFile && destDir) {
+  let result = dest.indexOf("/");
+
+  console.log(typeof srcFile[src] == "string");
+  console.log(typeof srcFile[dest] == "object");
+
+  if (typeof srcFile[src] == "string" && typeof srcFile[dest] == "object") {
     const fileName = src.split("/").pop();
-    destDir[fileName] = srcFile;
+    srcFile[dest][fileName] = srcFile[src];
+    return `Copied ${fileName} to ${dest}`;
+  } else if (typeof srcFile[src] == "string" && result != -1) {
+    const fileName = src.split("/").pop();
+    destDir[fileName] = srcFile[src];
     return `Copied ${fileName} to ${dest}`;
   } else {
     return `cp: ${src}: No such file or directory`;
@@ -59,7 +68,7 @@ export default function cp(command) {
   console.log(typeof sourceFile[src]);
   if (sourceDir && typeof sourceDir == "object") {
     if (args[1] === "-rR" && args.length >= 3) {
-      return copyDirectory(args[2], args[3]);
+      return copyDirectory(src, dest);
     } else {
       return "cp: missing -rR flag to copy directory. Usage: cp -rR <source> <destination>";
     }

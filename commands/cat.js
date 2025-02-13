@@ -13,6 +13,6 @@ export default function cat(filename) {
       return `cat: ${filename}: Is a directory`;
     }
   } else {
-    return `cat: ${filename}: No such file`;
+    return `cat: ${filename}: No such file, or file is empty`;
   }
 }
