@@ -26,6 +26,7 @@ let history = document.getElementById("history");
 let currentPath = document.getElementById("currentPath");
 let commandHistory = [];
 let historyIndex = -1;
+let cursorPosition = 0;
 let commands = [
   "cal",
   "cat",
@@ -154,16 +155,52 @@ function submitCommand(command) {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
+function UCH() {
+  let inputSpan = document.getElementById("userinput");
+  let text = inputSpan.textContent;
+
+  let highlightedText = "";
+
+  for (let i = 0; i < text.length; i++) {
+    if (i === cursorPosition) {
+        highlightedText += `<span class="cursor-highlight">${text[i]}</span>`;
+    } else {
+        highlightedText += text[i];
+    }
+  }
+
+  if (cursorPosition === text.length) {
+    highlightedText += `<span class="cursor-highlight">&nbsp;</span>`;
+  }
+  let tempSpan = document.createElement("span");
+  tempSpan.innerHTML = highlightedText;
+  inputSpan.replaceChildren(...tempSpan.childNodes);
+  console.log(cursorPosition)
+}
+
 document.addEventListener("keydown", function (event) {
   window.scrollTo(0, document.body.scrollHeight);
   if (event.key == "Enter") {
-    submitCommand(userInput.innerText);
+    submitCommand(userInput.textContent.substring(0, userInput.textContent.length - 1));
+    cursorPosition = 0;
+    UCH();
     return;
-  } else if (event.key == "Backspace") {
-    userInput.innerText = userInput.innerText.slice(0, -1);
+  } else if (event.key == "Backspace" && cursorPosition > 0) {
+    userInput.textContent = userInput.textContent.slice(0, cursorPosition - 1) + userInput.textContent.slice(cursorPosition);
+    cursorPosition--;
+    UCH();
     return;
-  } else if (event.key == " ") {
-    userInput.innerText += " ";
+  }else if (event.key === "Delete" && cursorPosition < userInput.textContent.length) {
+    userInput.textContent = userInput.textContent.slice(0, cursorPosition) + userInput.textContent.slice(cursorPosition + 1);
+    UCH();
+    return;
+  } else if (event.key === " ") {
+    event.preventDefault();
+    if(cursorPosition > 0){
+      userInput.textContent = userInput.textContent.slice(0, cursorPosition) + " " + userInput.textContent.slice(cursorPosition);
+      cursorPosition++;
+      UCH();
+    }
     return;
   } else if (event.key === "ArrowUp") {
     event.preventDefault();
@@ -171,6 +208,7 @@ document.addEventListener("keydown", function (event) {
     if (historyIndex > 0) {
       historyIndex--;
       userInput.innerText = commandHistory[historyIndex];
+      cursorPosition = userInput.innerText.length;
     }
     return;
   } else if (event.key === "ArrowDown") {
@@ -178,23 +216,29 @@ document.addEventListener("keydown", function (event) {
     if (historyIndex < commandHistory.length - 1) {
       historyIndex++;
       userInput.innerText = commandHistory[historyIndex];
+      cursorPosition = userInput.innerText.length;
     } else {
       historyIndex = commandHistory.length;
       userInput.innerText = "";
+      cursorPosition = 0;  
     }
     return;
+  } else if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    cursorPosition = Math.max(0, cursorPosition - 1);
+    UCH();
+    return;
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    cursorPosition = Math.min(userInput.textContent.length-1, cursorPosition + 1);
+    UCH();
+    return;
+  } else if (!specialKeys.includes(event.key) && event.key.length === 1) {
+    userInput.textContent = userInput.textContent.slice(0, cursorPosition) + event.key + userInput.textContent.slice(cursorPosition);
+    cursorPosition++;
   }
-
+  UCH();
   if (specialKeys.includes(event.key)) return;
-  cursor.innerText = "-";
-  userInput.innerText += event.key;
 });
 
-async function toggleCursor() {
-  while (true) {
-    cursor.innerText = cursor.innerText == "" ? "-" : "";
-    await sleep(600);
-  }
-}
-
-toggleCursor();
+UCH();
