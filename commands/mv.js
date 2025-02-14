@@ -8,9 +8,11 @@ function mvCommand(source, destination) {
   const fullSourcePath = `${currentDirectory}/${source}`;
   const fullDestinationPath = `${currentDirectory}/${destination}`;
 
-  const sourceObj = getCurrentDirectoryObject(fullSourcePath);
+  const sourceObj = getCurrentDirectoryObject(
+    source.lastIndexOf("/") == -1 ? fullSourcePathmkdi : source
+  );
   const destinationDir = getCurrentDirectoryObject(
-    destination.lastIndexOf("/") == -1 ? currentDirectory : destination
+    destination.lastIndexOf("/") == -1 ? fullDestinationPath : destination
   );
 
   if (!sourceObj) {
@@ -23,6 +25,10 @@ function mvCommand(source, destination) {
 
   const name = source.split("/").pop();
 
+  console.log(name);
+
+  console.log(destinationDir);
+
   destinationDir[name] = sourceObj;
 
   const sourceParts = fullSourcePath.split("/").filter(Boolean);
@@ -34,7 +40,9 @@ function mvCommand(source, destination) {
   const sourceItemName = sourceParts[sourceParts.length - 1];
   delete current[sourceItemName];
 
-  return `Moved ${name} from ${fullSourcePath} to ${fullDestinationPath}`;
+  return `Moved ${name} from ${fullSourcePath.split("/")[2]} to ${
+    fullDestinationPath.split("/")[2]
+  }`;
 }
 
 export default function mv(command) {

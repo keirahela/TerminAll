@@ -157,9 +157,9 @@ function submitCommand(command) {
 
 function updateCursor() {
   let inputSpan = document.getElementById("userinput");
-  
+
   let text = inputSpan.textContent;
-  
+
   let highlightedText = "";
 
   for (let characterIndex = 0; characterIndex < text.length; characterIndex++) {
@@ -184,26 +184,39 @@ function updateCursor() {
 document.addEventListener("keydown", function (event) {
   window.scrollTo(0, document.body.scrollHeight);
   if (event.key == "Enter") {
-    let subcom = userInput.textContent.substring(0, userInput.textContent.length - 1);
+    let subcom = userInput.textContent.substring(
+      0,
+      userInput.textContent.length - 1
+    );
     submitCommand(subcom);
     cursorPosition = 0;
 
     updateCursor();
     return;
   } else if (event.key == "Backspace" && cursorPosition > 0) {
-    userInput.textContent = userInput.textContent.slice(0, cursorPosition - 1) + userInput.textContent.slice(cursorPosition);
+    userInput.textContent =
+      userInput.textContent.slice(0, cursorPosition - 1) +
+      userInput.textContent.slice(cursorPosition);
     cursorPosition--;
 
     updateCursor();
     return;
-  }else if (event.key === "Delete" && cursorPosition < userInput.textContent.length) {
-    userInput.textContent = userInput.textContent.slice(0, cursorPosition) + userInput.textContent.slice(cursorPosition + 1);
-    UCH();
+  } else if (
+    event.key === "Delete" &&
+    cursorPosition < userInput.textContent.length
+  ) {
+    userInput.textContent =
+      userInput.textContent.slice(0, cursorPosition) +
+      userInput.textContent.slice(cursorPosition + 1);
+    updateCursor();
     return;
   } else if (event.key === " ") {
     event.preventDefault();
-    if(cursorPosition > 0){
-      userInput.textContent = userInput.textContent.slice(0, cursorPosition) + " " + userInput.textContent.slice(cursorPosition);
+    if (cursorPosition > 0) {
+      userInput.textContent =
+        userInput.textContent.slice(0, cursorPosition) +
+        " " +
+        userInput.textContent.slice(cursorPosition);
       cursorPosition++;
 
       updateCursor();
@@ -228,7 +241,7 @@ document.addEventListener("keydown", function (event) {
     } else {
       historyIndex = commandHistory.length;
       userInput.innerText = "";
-      cursorPosition = 0;  
+      cursorPosition = 0;
     }
 
     updateCursor();
@@ -241,12 +254,18 @@ document.addEventListener("keydown", function (event) {
     return;
   } else if (event.key === "ArrowRight") {
     event.preventDefault();
-    cursorPosition = Math.min(userInput.textContent.length-1, cursorPosition + 1);
-    
+    cursorPosition = Math.min(
+      userInput.textContent.length - 1,
+      cursorPosition + 1
+    );
+
     updateCursor();
     return;
   } else if (!specialKeys.includes(event.key) && event.key.length === 1) {
-    userInput.textContent = userInput.textContent.slice(0, cursorPosition) + event.key + userInput.textContent.slice(cursorPosition);
+    userInput.textContent =
+      userInput.textContent.slice(0, cursorPosition) +
+      event.key +
+      userInput.textContent.slice(cursorPosition);
     cursorPosition++;
   }
   updateCursor();
