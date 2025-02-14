@@ -64,8 +64,8 @@ export default function cp(command) {
     src = args[2];
   }
   const sourceDir = getCurrentDirectoryObject(src);
-  const sourceFile = getCurrentDirectoryObject(currentDirectory);
-  console.log(typeof sourceFile[src]);
+  const sourceFile = getCurrentDirectoryObject(dest);
+  console.log(typeof sourceFile[src], sourceFile);
   if (sourceDir && typeof sourceDir == "object") {
     if (args[1] === "-rR" && args.length >= 3) {
       return copyDirectory(src, dest);

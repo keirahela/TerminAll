@@ -14,7 +14,7 @@ export default function cd(directory) {
 
   console.log(directory);
   if (directory == "" || directory == undefined) {
-    changeDirectory("/");
+    changeDirectory("/home/terminal");
     updateCurrentPath();
     return "Changed directory to: /";
   }
@@ -70,9 +70,7 @@ function resolvePath(currentDir, directory) {
 
 function updateCurrentPath() {
   currentPath.innerText = `${BASE_PREFIX} ${
-    currentDirectory.split("/").pop() === ""
-      ? "~"
-      : currentDirectory.split("/").pop()
+    currentDirectory.split("/").pop() === "terminal" ? "~" : currentDirectory
   } $`;
 }
 

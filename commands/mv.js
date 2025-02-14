@@ -8,9 +8,10 @@ function mvCommand(source, destination) {
   const fullSourcePath = `${currentDirectory}/${source}`;
   const fullDestinationPath = `${currentDirectory}/${destination}`;
 
-  const sourceObj = getCurrentDirectoryObject(
-    source.lastIndexOf("/") == -1 ? fullSourcePathmkdi : source
+  let sourceObj = getCurrentDirectoryObject(
+    source.lastIndexOf("/") == -1 ? currentDirectory : source
   );
+  console.log(sourceObj, fullSourcePath);
   const destinationDir = getCurrentDirectoryObject(
     destination.lastIndexOf("/") == -1 ? fullDestinationPath : destination
   );
@@ -18,6 +19,8 @@ function mvCommand(source, destination) {
   if (!sourceObj) {
     return `mv: ${source}: No such file or directory`;
   }
+
+  sourceObj = sourceObj[source];
 
   if (!destinationDir || typeof destinationDir !== "object") {
     return `mv: ${destination}: No such directory`;
@@ -40,9 +43,7 @@ function mvCommand(source, destination) {
   const sourceItemName = sourceParts[sourceParts.length - 1];
   delete current[sourceItemName];
 
-  return `Moved ${name} from ${fullSourcePath.split("/")[2]} to ${
-    fullDestinationPath.split("/")[2]
-  }`;
+  return `Moved ${name} succesfully`;
 }
 
 export default function mv(command) {
