@@ -1,13 +1,16 @@
 export function getCurrentDirectoryObject(currentDir) {
   const parts = currentDir.split("/").filter(Boolean);
   let current = fileSystem;
+  let parent = null;
 
   for (const part of parts) {
     if (part === ".") {
       continue;
     } else if (part === "..") {
-      current = current.parent || current;
+      current = parent || current;
+      console.log(parent);
     } else if (current[part]) {
+      parent = current;
       current = current[part];
     } else {
       return null;

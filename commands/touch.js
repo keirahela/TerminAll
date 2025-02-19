@@ -2,29 +2,14 @@ import {
   getCurrentDirectoryObject,
   currentDirectory,
 } from "../shared/currentDirectory.js";
-
-function beforeLast(value, delimiter) {
-  value = value || "";
-
-  return delimiter === ""
-    ? value
-    : value.slice(0, value.lastIndexOf(delimiter));
-}
-
-function afterLast(value, delimiter) {
-  value = value || "";
-
-  return delimiter === "" ? value : value.split(delimiter).pop();
-}
+import { afterLast, beforeLast } from "../utils/helpers.js";
 
 export default function touch(filename) {
   if (!filename) {
     return "Usage: touch <filename>";
   }
   const currentDirObj = getCurrentDirectoryObject(
-    filename.lastIndexOf("/") == -1
-      ? currentDirectory
-      : beforeLast(filename, "/")
+    currentDirectory + "/" + beforeLast(filename, "/")
   );
   console.log(currentDirObj, filename);
   if (currentDirObj) {

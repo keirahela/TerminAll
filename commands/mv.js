@@ -3,17 +3,18 @@ import {
   fileSystem,
   currentDirectory,
 } from "../shared/currentDirectory.js";
+import { afterLast, beforeLast } from "../utils/helpers.js";
 
 function mvCommand(source, destination) {
   const fullSourcePath = `${currentDirectory}/${source}`;
   const fullDestinationPath = `${currentDirectory}/${destination}`;
 
   let sourceObj = getCurrentDirectoryObject(
-    source.lastIndexOf("/") == -1 ? currentDirectory : source
+    currentDirectory + "/" + beforeLast(source, "/")
   );
   console.log(sourceObj, fullSourcePath);
   const destinationDir = getCurrentDirectoryObject(
-    destination.lastIndexOf("/") == -1 ? fullDestinationPath : destination
+    currentDirectory + "/" + destination
   );
 
   if (!sourceObj) {
@@ -35,13 +36,7 @@ function mvCommand(source, destination) {
   destinationDir[name] = sourceObj;
 
   const sourceParts = fullSourcePath.split("/").filter(Boolean);
-  let current = fileSystem;
-
-  for (let i = 0; i < sourceParts.length - 1; i++) {
-    current = current[sourceParts[i]];
-  }
-  const sourceItemName = sourceParts[sourceParts.length - 1];
-  delete current[sourceItemName];
+  delete sourceObj[afterLast(source, "/")];
 
   return `Moved ${name} succesfully`;
 }

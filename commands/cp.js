@@ -2,6 +2,7 @@ import {
   currentDirectory,
   getCurrentDirectoryObject,
 } from "../shared/currentDirectory.js";
+import { afterLast, beforeLast } from "../utils/helpers.js";
 
 function copyFile(src, dest) {
   let srcFile = getCurrentDirectoryObject(currentDirectory);
@@ -56,25 +57,53 @@ export default function cp(command) {
   if (args.length < 2) {
     return "cp: invalid syntax. Usage: cp (-rR) <source> <destination>";
   }
-  console.log(args);
-  let dest = args[2];
+
   let src = args[1];
+  let dest = args[2];
+
   if (args[1] === "-rR" && args.length >= 3) {
     dest = args[3];
     src = args[2];
   }
-  const sourceDir = getCurrentDirectoryObject(src);
-  const sourceFile = getCurrentDirectoryObject(dest);
-  console.log(typeof sourceFile[src], sourceFile);
-  if (sourceDir && typeof sourceDir == "object") {
-    if (args[1] === "-rR" && args.length >= 3) {
-      return copyDirectory(src, dest);
-    } else {
-      return "cp: missing -rR flag to copy directory. Usage: cp -rR <source> <destination>";
-    }
-  } else if (src in sourceFile) {
-    return copyFile(src, dest);
-  } else {
+
+  const sourceDir = getCurrentDirectoryObject(currentDirectory);
+  let sourceFile = sourceDir[src];
+  console.log(sourceFile);
+
+  if (sourceFile == undefined || sourceFile == null) {
+    sourceFile = getCurrentDirectoryObject(
+      currentDirectory + "/" + beforeLast(src, "/")
+    );
+
+    console.log(
+      currentDirectory + "/" + beforeLast(src, "/") + "/",
+      sourceFile
+    );
+    sourceFile = sourceFile ? sourceFile[afterLast(src, "/")] : undefined;
+  }
+
+  if (sourceFile == undefined || sourceFile == null) {
     return `cp: ${src}: No such file or directory`;
   }
+
+  const destDir = getCurrentDirectoryObject(currentDirectory + "/" + dest);
+
+  if (destDir && typeof destDir === "object") {
+    const fileName = src.split("/").pop();
+    destDir[fileName] = sourceFile;
+    return `Copied ${fileName} to ${dest}`;
+  } else if (dest && typeof dest === "string") {
+    const destParent = getCurrentDirectoryObject(
+      currentDirectory + "/" + dest.split("/").slice(0, -1).join("/")
+    );
+    if (destParent && typeof destParent === "object") {
+      const fileName = src.split("/").pop();
+      destParent[fileName] = sourceFile;
+      return `Copied ${fileName} to ${dest}`;
+    } else {
+      return `cp: ${dest}: No such directory`;
+    }
+  }
+
+  return `cp: ${src}: No such file or directory`;
 }
