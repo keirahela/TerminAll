@@ -88,6 +88,10 @@ export default function cp(command) {
 
   const destDir = getCurrentDirectoryObject(currentDirectory + "/" + dest);
 
+  if (destDir == null || destDir == undefined) {
+    return `cp: ${dest}: No such directory`;
+  }
+
   if (destDir && typeof destDir === "object") {
     const fileName = src.split("/").pop();
     destDir[fileName] = sourceFile;

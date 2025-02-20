@@ -12,16 +12,25 @@ function mvCommand(source, destination) {
   let sourceObj = getCurrentDirectoryObject(
     currentDirectory + "/" + beforeLast(source, "/")
   );
+  let sourceDir = getCurrentDirectoryObject(
+    currentDirectory + "/" + beforeLast(source, "/")
+  );
   console.log(sourceObj, fullSourcePath);
   const destinationDir = getCurrentDirectoryObject(
     currentDirectory + "/" + destination
   );
 
+  console.log(source);
+
   if (!sourceObj) {
     return `mv: ${source}: No such file or directory`;
   }
 
-  sourceObj = sourceObj[source];
+  sourceObj = sourceObj[afterLast(source, "/")];
+
+  if (sourceObj == undefined || typeof sourceObj == undefined) {
+    return `mv: ${source}: No such file`;
+  }
 
   if (!destinationDir || typeof destinationDir !== "object") {
     return `mv: ${destination}: No such directory`;
@@ -36,7 +45,11 @@ function mvCommand(source, destination) {
   destinationDir[name] = sourceObj;
 
   const sourceParts = fullSourcePath.split("/").filter(Boolean);
-  delete sourceObj[afterLast(source, "/")];
+  console.log(sourceObj);
+  delete sourceDir[afterLast(source, "/")];
+  console.log(
+    getCurrentDirectoryObject(currentDirectory + "/" + beforeLast(source, "/"))
+  );
 
   return `Moved ${name} succesfully`;
 }

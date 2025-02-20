@@ -8,9 +8,14 @@ export default function touch(filename) {
   if (!filename) {
     return "Usage: touch <filename>";
   }
-  const currentDirObj = getCurrentDirectoryObject(
-    currentDirectory + "/" + beforeLast(filename, "/")
-  );
+  let currentDirObj;
+  if (filename.includes("/")) {
+    currentDirObj = getCurrentDirectoryObject(
+      currentDirectory + "/" + beforeLast(filename, "/")
+    );
+  } else {
+    currentDirObj = getCurrentDirectoryObject(currentDirectory);
+  }
   console.log(currentDirObj, filename);
   if (currentDirObj) {
     if (!currentDirObj.hasOwnProperty(afterLast(filename, "/"))) {
@@ -20,6 +25,6 @@ export default function touch(filename) {
       return `touch: File '${afterLast(filename, "/")}' already exists`;
     }
   } else {
-    return `touch: No such directory`;
+    return `touch: ${filename}: No such directory`;
   }
 }

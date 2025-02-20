@@ -85,7 +85,7 @@ function handleCommand(command) {
     case "logname":
       return BASE_PREFIX.split("@")[0];
     case "ls":
-      return ls(args[1]);
+      return ls(args[1], args[2]);
     case "pwd":
       return pwd();
     case "rm":

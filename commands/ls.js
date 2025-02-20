@@ -3,16 +3,26 @@ import {
   currentDirectory,
 } from "../shared/currentDirectory.js";
 
-export default function ls(flags = "") {
-  const currentDirObj = getCurrentDirectoryObject(currentDirectory);
+export default function ls(dir = "", flags = "") {
+  let currentDirObj;
+  console.log(currentDirectory + "/" + dir);
+  if (dir == "") {
+    currentDirObj = getCurrentDirectoryObject(currentDirectory);
+  } else if (!dir.includes("-")) {
+    currentDirObj = getCurrentDirectoryObject(currentDirectory + "/" + dir);
+    console.log(currentDirObj);
+  } else {
+    currentDirObj = getCurrentDirectoryObject(currentDirectory);
+    flags = dir;
+  }
 
   if (!currentDirObj) {
-    return "No such directory: " + currentDirectory;
+    return "No such directory: " + dir;
   }
 
   const entries = Object.keys(currentDirObj);
 
-  const showAll = flags.includes("-a");
+  const showAll = flags.includes("a") && flags.includes("-");
   const filteredEntries = showAll
     ? entries
     : entries.filter((entry) => !entry.startsWith("."));
