@@ -24,9 +24,11 @@ let cursor = document.getElementById("cursor");
 let userInput = document.getElementById("userinput");
 let history = document.getElementById("history");
 let currentPath = document.getElementById("currentPath");
+let header = document.getElementById("header");
 let commandHistory = [];
 let historyIndex = -1;
 let cursorPosition = 0;
+let isNano = false;
 let commands = [
   "cal",
   "cat",
@@ -47,6 +49,7 @@ let commands = [
   "touch",
   "bcolor",
   "fcolor",
+  "nano",
 ];
 
 function clearInput() {
@@ -96,6 +99,8 @@ function handleCommand(command) {
       return bcolor(args[1]);
     case "fcolor":
       return fcolor(args[1]);
+    case "nano":
+      return nano();
     case "currentcar":
       return currentcar();
     case "":
@@ -103,6 +108,15 @@ function handleCommand(command) {
     default:
       return "Unsupported command: " + command;
   }
+}
+
+function nano() {
+  isNano = true;
+  header.style.display = "none";
+  history.style.display = "none";
+  currentPath.style.display = "none";
+
+  return "";
 }
 
 function date() {
@@ -130,29 +144,31 @@ function writeToFile(name, content) {
 }
 
 function submitCommand(command) {
-  if (command.trim() === "") return;
-  commandHistory.push(command);
-  historyIndex = commandHistory.length;
-
-  clearInput();
-
-  let history2 = document.createElement("span");
-  let span = document.createElement("span");
-
-  history2.innerText = currentPath.innerText + " " + command;
-  let result = handleCommand(command);
-  span.innerText = result;
-  let toFile = command.split("> ")[1];
-  if (toFile) {
+  if (!isNano) {
+    if (command.trim() === "") return;
+    commandHistory.push(command);
+    historyIndex = commandHistory.length;
+    
+    clearInput();
+    
+    let history2 = document.createElement("span");
+    let span = document.createElement("span");
+    
+    history2.innerText = currentPath.innerText + " " + command;
+    let result = handleCommand(command);
+    span.innerText = result;
+    let toFile = command.split("> ")[1];
+    if (toFile) {
     span.innerText = writeToFile(
       toFile,
       result.split(" > ")[0].replace(/["']/g, "")
     );
   }
-
+  
   history.appendChild(history2);
   history.appendChild(span);
   window.scrollTo(0, document.body.scrollHeight);
+}
 }
 
 function updateCursor() {
@@ -261,6 +277,18 @@ document.addEventListener("keydown", function (event) {
 
     updateCursor();
     return;
+  } else if (event.ctrlKey && event.key === 'x') {
+    if (isNano) {
+      userInput.innerHTML = "";
+      history.style.display = "flex";
+      header.style.display = "block";
+      currentPath.style.display = "inline";
+      isNano = false;
+
+      window.scrollTo(0, document.body.scrollHeight);
+      updateCursor();
+      return;
+    }
   } else if (!specialKeys.includes(event.key) && event.key.length === 1) {
     userInput.textContent =
       userInput.textContent.slice(0, cursorPosition) +
