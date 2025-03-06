@@ -92,6 +92,8 @@ export let fileSystem = {
         "cat.jpg": "A picture of a cat",
         "dog.jpg": "A picture of a dog",
       },
+      "read.txt":
+    "Welcome to the Awesome Terminal App!\n This is a simple command-line application (CLI),\n designed to enhance your terminal experience with various utilities and features.",
     },
     user2: {
       projects: {

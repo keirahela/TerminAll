@@ -29,6 +29,15 @@ let commandHistory = [];
 let historyIndex = -1;
 let cursorPosition = 0;
 let isNano = false;
+let fileName = "";
+let fileChanged = false;
+let textLines;
+let currentLine;
+let cursorColumn = 0;
+let text;
+let beforeCursor;
+let lineStart;
+let lineEnd;
 let commands = [
   "cal",
   "cat",
@@ -100,7 +109,7 @@ function handleCommand(command) {
     case "fcolor":
       return fcolor(args[1]);
     case "nano":
-      return nano();
+      return nano(args[1]);
     case "currentcar":
       return currentcar();
     case "":
@@ -110,13 +119,30 @@ function handleCommand(command) {
   }
 }
 
-function nano() {
+function nano(filename) {
+  let currentDirObj = getCurrentDirectoryObject(currentDirectory);
+  if (!currentDirObj) {
+      return `Error: Directory does not exist: ${currentDirectory}`;
+  }
+
   isNano = true;
+  fileName = filename;
+  userInput.style.display = "block";
   header.style.display = "none";
   history.style.display = "none";
   currentPath.style.display = "none";
+  userInput.style.whiteSpace = "pre-wrap";
 
-  return "";
+  if (currentDirObj[filename]) {
+      userInput.textContent = currentDirObj[filename];
+  } else {
+      userInput.textContent = "";
+  }
+  cursorPosition = userInput.textContent.length;
+  fileChanged = false;
+  updateCursor();
+
+  return;
 }
 
 function date() {
@@ -128,56 +154,48 @@ function currentcar() {
 }
 
 function writeToFile(name, content) {
-  const directory = getCurrentDirectoryObject(currentDirectory);
-
-  if (!directory) {
-    return `Error: The current directory does not exist. Cannot write to ${name}`;
+  let currentDirObj = getCurrentDirectoryObject(currentDirectory);
+  if (!currentDirObj) {
+    return `Error: Directory does not exist: ${currentDirectory}`;
   }
 
-  const fileName = name.split("/").pop();
-
-  directory[fileName] = content;
-
-  console.log(directory);
-
-  return `Wrote to file ${fileName}`;
+  currentDirObj[name] = content;
+  return `Wrote to file ${name}`;
 }
 
 function submitCommand(command) {
   if (!isNano) {
     if (command.trim() === "") return;
-    commandHistory.push(command);
-    historyIndex = commandHistory.length;
-    
-    clearInput();
-    
-    let history2 = document.createElement("span");
-    let span = document.createElement("span");
-    
-    history2.innerText = currentPath.innerText + " " + command;
-    let result = handleCommand(command);
-    span.innerText = result;
-    let toFile = command.split("> ")[1];
-    if (toFile) {
-    span.innerText = writeToFile(
-      toFile,
-      result.split(" > ")[0].replace(/["']/g, "")
-    );
+      commandHistory.push(command);
+      historyIndex = commandHistory.length;
+      
+      clearInput();
+      
+      let history2 = document.createElement("span");
+      let span = document.createElement("span");
+      
+      history2.innerText = currentPath.innerText + " " + command;
+      let result = handleCommand(command);
+      span.innerText = result;
+      let toFile = command.split("> ")[1];
+      if (toFile) {
+      span.innerText = writeToFile(
+        toFile,
+        result.split(" > ")[0].replace(/["']/g, "")
+      );
+    }
+
+    history.appendChild(history2);
+    history.appendChild(span);
+    window.scrollTo(0, document.body.scrollHeight);
   }
-  
-  history.appendChild(history2);
-  history.appendChild(span);
-  window.scrollTo(0, document.body.scrollHeight);
-}
 }
 
 function updateCursor() {
   let inputSpan = document.getElementById("userinput");
-
   let text = inputSpan.textContent;
 
   let highlightedText = "";
-
   for (let characterIndex = 0; characterIndex < text.length; characterIndex++) {
     if (characterIndex === cursorPosition) {
       highlightedText += `<span class="cursor-highlight">${text[characterIndex]}</span>`;
@@ -196,37 +214,67 @@ function updateCursor() {
 
   inputSpan.replaceChildren(...tempSpan.childNodes);
 }
+function returnUpdate(){
+  updateCursor();
+  return;
+}
+
+function textLinesSum(){
+  textLines = userInput.textContent.split("\n");
+  currentLine = userInput.textContent.substring(0, cursorPosition).split("\n").length - 1;
+  text = userInput.textContent;
+  beforeCursor = text.substring(0, cursorPosition);
+  lineStart = beforeCursor.lastIndexOf("\n") + 1;
+  lineEnd = lineStart + textLines[currentLine].length;
+}
 
 document.addEventListener("keydown", function (event) {
   window.scrollTo(0, document.body.scrollHeight);
+
   if (event.key == "Enter") {
-    let subcom = userInput.textContent.substring(
-      0,
-      userInput.textContent.length - 1
-    );
-    submitCommand(subcom);
-    cursorPosition = 0;
+    if(isNano){
+      event.preventDefault();
+      userInput.textContent =
+          userInput.textContent.slice(0, cursorPosition) +
+          "\n" +
+          userInput.textContent.slice(cursorPosition);
+      cursorPosition++;
+      fileChanged = true;
 
-    updateCursor();
-    return;
-  } else if (event.key == "Backspace" && cursorPosition > 0) {
-    userInput.textContent =
-      userInput.textContent.slice(0, cursorPosition - 1) +
-      userInput.textContent.slice(cursorPosition);
-    cursorPosition--;
+        if (event.key.length === 1 && !event.ctrlKey && !specialKeys.includes(event.key)) {
+          fileChanged = true;
+        }   
+    } else{
+      let subcom = userInput.textContent.substring(
+        0,
+        userInput.textContent.length - 1
+      );
+      submitCommand(subcom);
+      cursorPosition = 0;
+    }
 
-    updateCursor();
-    return;
-  } else if (
-    event.key === "Delete" &&
-    cursorPosition < userInput.textContent.length
-  ) {
+    returnUpdate()
+  } 
+  
+  else if (event.key == "Backspace" && cursorPosition > 0) {
+        userInput.textContent =
+        userInput.textContent.slice(0, cursorPosition - 1) +
+        userInput.textContent.slice(cursorPosition);
+
+      cursorPosition--;
+
+    returnUpdate()
+  } 
+  
+  else if (event.key === "Delete" && cursorPosition < userInput.textContent.length) {
     userInput.textContent =
       userInput.textContent.slice(0, cursorPosition) +
       userInput.textContent.slice(cursorPosition + 1);
-    updateCursor();
-    return;
-  } else if (event.key === " ") {
+
+    returnUpdate()
+  } 
+  
+  else if (event.key === " ") {
     event.preventDefault();
     if (cursorPosition > 0) {
       userInput.textContent =
@@ -234,62 +282,106 @@ document.addEventListener("keydown", function (event) {
         " " +
         userInput.textContent.slice(cursorPosition);
       cursorPosition++;
-
-      updateCursor();
     }
-    return;
-  } else if (event.key === "ArrowUp") {
+
+    returnUpdate()
+  } 
+  
+  else if (event.key === "ArrowUp") {
     event.preventDefault();
-    if (historyIndex > 0) {
-      historyIndex--;
-      userInput.innerText = commandHistory[historyIndex];
-      cursorPosition = userInput.innerText.length;
+    if(isNano){
+      textLinesSum();
+      if (currentLine > 0) {
+        let prevLineLength = textLines[currentLine - 1].length;
+        let newPosition = Math.min(cursorColumn, prevLineLength);
+        cursorPosition = textLines.slice(0, currentLine - 1).join("\n").length + newPosition + (currentLine > 1 ? 1 : 0);
+      }
+    }
+    else{
+      if (historyIndex > 0) {
+        historyIndex--;
+        userInput.innerText = commandHistory[historyIndex];
+        cursorPosition = userInput.innerText.length;
+      }
     }
 
-    updateCursor();
-    return;
-  } else if (event.key === "ArrowDown") {
+    returnUpdate()
+  } 
+  
+  else if (event.key === "ArrowDown") {
     event.preventDefault();
-    if (historyIndex < commandHistory.length - 1) {
-      historyIndex++;
-      userInput.innerText = commandHistory[historyIndex];
-      cursorPosition = userInput.innerText.length;
-    } else {
-      historyIndex = commandHistory.length;
-      userInput.innerText = "";
-      cursorPosition = 0;
+    if(isNano){
+      textLinesSum();
+      if (currentLine < textLines.length - 1) {
+        let nextLineLength = textLines[currentLine + 1].length;
+        let newPosition = Math.min(cursorColumn, nextLineLength);
+        cursorPosition = textLines.slice(0, currentLine + 1).join("\n").length + newPosition + 1;
+      }
+    } else{
+      if (historyIndex < commandHistory.length - 1) {
+        historyIndex++;
+        userInput.innerText = commandHistory[historyIndex];
+        cursorPosition = userInput.innerText.length;
+      } else {
+        historyIndex = commandHistory.length;
+        userInput.innerText = "";
+        cursorPosition = 0;
+      }
     }
 
-    updateCursor();
-    return;
-  } else if (event.key === "ArrowLeft") {
+    returnUpdate()
+  } 
+  
+  else if (event.key === "ArrowLeft") {
     event.preventDefault();
     cursorPosition = Math.max(0, cursorPosition - 1);
 
-    updateCursor();
-    return;
-  } else if (event.key === "ArrowRight") {
+    returnUpdate()
+  } 
+  
+  else if (event.key === "ArrowRight") {
     event.preventDefault();
     cursorPosition = Math.min(
       userInput.textContent.length - 1,
       cursorPosition + 1
     );
 
-    updateCursor();
-    return;
-  } else if (event.ctrlKey && event.key === 'x') {
-    if (isNano) {
-      userInput.innerHTML = "";
-      history.style.display = "flex";
-      header.style.display = "block";
-      currentPath.style.display = "inline";
-      isNano = false;
-
-      window.scrollTo(0, document.body.scrollHeight);
-      updateCursor();
-      return;
+    returnUpdate()
+  } 
+  
+  else if (event.ctrlKey && event.key === 'x' && isNano) {
+    event.preventDefault();
+    if (fileChanged) {
+          if (confirm("Do you want to save changes?")) {
+              let currentDirObj = getCurrentDirectoryObject(currentDirectory);
+              if (currentDirObj) {
+                  currentDirObj[fileName] = userInput.textContent;
+              }
+          }
     }
-  } else if (!specialKeys.includes(event.key) && event.key.length === 1) {
+    isNano = false;
+    header.style.display = "block";
+    history.style.display = "flex";
+    currentPath.style.display = "inline";
+    userInput.style.display = "inline";
+    userInput.textContent = "";
+    cursorPosition = 0;
+
+    returnUpdate()
+    } 
+    
+  else if (event.ctrlKey && event.key === 'o' && isNano) {
+        event.preventDefault();
+        let currentDirObj = getCurrentDirectoryObject(currentDirectory);
+        if (currentDirObj) {
+            currentDirObj[fileName] = userInput.textContent;
+            fileChanged = false;
+            alert(`File saved: ${fileName}`);
+        }
+      return;
+    } 
+    
+  else if (!specialKeys.includes(event.key) && event.key.length === 1) {
     userInput.textContent =
       userInput.textContent.slice(0, cursorPosition) +
       event.key +
